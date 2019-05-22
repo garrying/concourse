@@ -18,7 +18,7 @@ var ErrFailedToAcquireLock = errors.New("failed to acquire lock")
 
 func NewChecker(
 	logger lager.Logger,
-	resourceFactory db.ResourceFactory,
+	resourceCheckFactory db.ResourceCheckFactory,
 	checkFactory resource.ResourceFactory,
 	secrets creds.Secrets,
 	pool worker.Pool,
@@ -26,7 +26,7 @@ func NewChecker(
 ) *checker {
 	return &checker{
 		logger,
-		resourceFactory,
+		resourceCheckFactory,
 		checkFactory,
 		secrets,
 		pool,
@@ -35,17 +35,17 @@ func NewChecker(
 }
 
 type checker struct {
-	logger          lager.Logger
-	resourceFactory db.ResourceFactory
-	checkFactory    resource.ResourceFactory
-	secrets         creds.Secrets
-	pool            worker.Pool
-	externalURL     string
+	logger               lager.Logger
+	resourceCheckFactory db.ResourceCheckFactory
+	checkFactory         resource.ResourceFactory
+	secrets              creds.Secrets
+	pool                 worker.Pool
+	externalURL          string
 }
 
 func (c *checker) Run(ctx context.Context) error {
 
-	resourceChecks, err := c.resourceFactory.ResourceChecks()
+	resourceChecks, err := c.resourceCheckFactory.ResourceChecks()
 	if err != nil {
 		c.logger.Error("failed-to-fetch-resource-checks", err)
 		return err
